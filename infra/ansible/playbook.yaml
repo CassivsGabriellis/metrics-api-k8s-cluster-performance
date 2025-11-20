@@ -64,6 +64,16 @@
         group: ubuntu
         mode: "0600"
         remote_src: yes
+    
+    - name: Export KUBECONFIG in ubuntu .bashrc
+      lineinfile:
+        path: /home/ubuntu/.bashrc
+        regexp: '^export KUBECONFIG='
+        line: 'export KUBECONFIG=$HOME/.kube/config'
+        create: yes
+        owner: ubuntu
+        group: ubuntu
+        mode: "0644"
 
     - name: Create kubectl symlink for convenience
       file:

@@ -52,7 +52,10 @@ jobs:
           script: |
             set -e
 
-            # Ensure kubectl is available (k3s installer symlinks kubectl)
+            # Use kubeconfig copied by Ansible
+            export KUBECONFIG=/home/ubuntu/.kube/config
+
+            echo "Using kubeconfig at $KUBECONFIG"
             kubectl version --client
 
             # Use commit SHA as immutable image tag
