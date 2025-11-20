@@ -46,26 +46,36 @@ jobs:
       - name: SSH into EC2 and update Kubernetes deployment
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_SSH_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            set -e
+            host: ${{ secrets.EC2_HOST }}
+            username: ${{ secrets.EC2_SSH_USER }}
+            key: ${{ secrets.EC2_SSH_KEY }}
+            script: |
+                set -e
+                export KUBECONFIG=/home/ubuntu/.kube/config
 
-            # Use kubeconfig copied by Ansible
-            export KUBECONFIG=/home/ubuntu/.kube/config
+                # Clone or update the repo containing k8s manifests
+                if [ ! -d "/home/ubuntu/k8s-server-performance-stack" ]; then
+                git clone https://github.com/CassivsGabriellis/metrics-api-k8s-server-performance.git /home/ubuntu/k8s-server-performance-stack
+                else
+                cd /home/ubuntu/k8s-server-performance-stack
+                git pull
+                fi
 
-            echo "Using kubeconfig at $KUBECONFIG"
-            kubectl version --client
+                cd /home/ubuntu/k8s-server-performance-stack
 
-            # Use commit SHA as immutable image tag
-            NEW_TAG=${GITHUB_SHA}
-            IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${GITHUB_SHA}"
+                # Ensure namespace and basic resources
+                kubectl apply -f k8s/namespace.yaml
+                kubectl apply -f k8s/deployment.yaml
+                kubectl apply -f k8s/service.yaml
+                kubectl apply -f k8s/ingress.yaml
 
-            echo "Updating deployment image to ${IMAGE}"
+                # Update deployment image with the current commit
+                NEW_TAG=${GITHUB_SHA}
+                IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${GITHUB_SHA}"
+                echo "Updating deployment image to ${IMAGE}"
 
-            kubectl -n metrics-api set image deployment/metrics-api-deployment \
-              metrics-api=${IMAGE}
+                kubectl -n metrics-api set image deployment/metrics-api-deployment \
+                metrics-api=${IMAGE}
 
-            echo "Waiting for rollout to complete..."
-            kubectl -n metrics-api rollout status deployment/metrics-api-deployment
+                echo "Waiting for rollout to complete..."
+                kubectl -n metrics-api rollout status deployment/metrics-api-deployment
