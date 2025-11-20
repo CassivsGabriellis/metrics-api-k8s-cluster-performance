@@ -1,1 +1,17 @@
+# Python
 __pycache__/
+*.pyc
+
+# Virtualenv (optional)
+venv/
+.env
+
+# Terraform
+infra/terraform/.terraform/
+infra/terraform/terraform.tfstate
+infra/terraform/terraform.tfstate.backup
+infra/terraform/.terraform.lock.hcl
+
+# Ansible
+infra/ansible/host_vars/*.yml
+infra/ansible/host_vars/*.yaml

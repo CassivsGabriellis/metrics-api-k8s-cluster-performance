@@ -1,0 +1,80 @@
+---
+- name: Configure EC2 as k3s Kubernetes node
+  hosts: k3s_node
+  become: true
+  vars:
+    k3s_version: "" 
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install base packages
+      apt:
+        name:
+          - curl
+          - wget
+          - git
+        state: present
+
+    - name: Install Docker
+      apt:
+        name:
+          - docker.io
+        state: present
+
+    - name: Enable and start Docker
+      systemd:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Add ubuntu user to docker group
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    - name: Download and install k3s
+      shell: |
+        curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik" sh -
+      args:
+        creates: /usr/local/bin/k3s
+
+    - name: Wait for k3s service to be active
+      systemd:
+        name: k3s
+        state: started
+        enabled: true
+
+    - name: Ensure .kube directory exists for ubuntu user
+      file:
+        path: /home/ubuntu/.kube
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: "0700"
+
+    - name: Copy k3s kubeconfig to ubuntu user
+      copy:
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: /home/ubuntu/.kube/config
+        owner: ubuntu
+        group: ubuntu
+        mode: "0600"
+        remote_src: yes
+
+    - name: Create kubectl symlink for convenience
+      file:
+        src: /usr/local/bin/kubectl
+        dest: /usr/local/bin/k3s-kubectl
+        state: link
+      ignore_errors: yes
+
+    - name: Ensure kubectl installed (k3s includes it)
+      file:
+        src: /usr/local/bin/k3s
+        dest: /usr/local/bin/kubectl
+        state: link
+      ignore_errors: yes
