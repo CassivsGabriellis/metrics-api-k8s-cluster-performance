@@ -58,9 +58,8 @@ jobs:
             echo "Using kubeconfig at $KUBECONFIG"
             kubectl version --client
 
-            # Use commit SHA as immutable image tag
-            NEW_TAG=${GITHUB_SHA}
-            IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${GITHUB_SHA}"
+            # Mounting the image with the commit SHA (resolved by GitHub)
+            IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
 
             echo "Updating deployment image to ${IMAGE}"
 
