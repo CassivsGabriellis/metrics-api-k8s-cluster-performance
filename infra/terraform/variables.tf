@@ -7,13 +7,12 @@ variable "aws_region" {
 variable "project_name" {
   description = "Project name prefix for AWS resources"
   type = string
-  default = "metris-api"
+  default = "metrics-api"
 }
 
 variable "allowed_ssh_cidr" {
   description = "CIDR allowed to SSH into the EC2 instance"
   type        = string
-  # For real use, replace this with your IP (e.g. X.X.X.X/32)
   default     = "0.0.0.0/0"
 }
 

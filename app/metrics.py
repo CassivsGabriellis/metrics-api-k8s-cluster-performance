@@ -67,7 +67,7 @@ def get_system_metrics() -> dict:
         },
     }
 
-# Metris from the app
+# Metrics from the app
 def get_app_metrics() -> dict:
     return {
         "uptime_seconds": get_uptime_seconds(),
