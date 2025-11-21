@@ -6,7 +6,7 @@ metadata:
   labels:
     app: metrics-api
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: metrics-api
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: metrics-api
-          image: cassiano00/k8s-server-performance-stack:latest
+          image: cassiano00/metrics-api:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000

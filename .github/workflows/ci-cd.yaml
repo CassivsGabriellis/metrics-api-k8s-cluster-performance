@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  IMAGE_NAME: k8s-server-performance-stack
+  IMAGE_NAME: metrics-api
 
 jobs:
   build-and-push:
@@ -67,4 +67,4 @@ jobs:
               metrics-api=${IMAGE}
 
             echo "Waiting for rollout to complete..."
-            kubectl -n metrics-api rollout status deployment/metrics-api-deployment
+            kubectl -n metrics-api rollout status deployment/metrics-api-deployment --timeout=120s

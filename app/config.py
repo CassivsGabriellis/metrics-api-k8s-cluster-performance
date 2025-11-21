@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 import os
 
-APP_NAME = "k8s-server-performance-stack"
+APP_NAME = "metrics-api"
 APP_VERSION = "1.0.0"
 APP_ENV = os.getenv("APP_ENV", "dev")
 
