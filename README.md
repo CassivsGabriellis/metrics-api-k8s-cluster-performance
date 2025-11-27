@@ -1,6 +1,6 @@
 # Metrics API – Kubernetes Deployment & CI/CD (FastAPI | k3s | Terraform | Ansible | GitHub Actions)
 
-**[Article explaning this project](https://www.foliocassianico.com.br/en/posts/api-k8s-server/)**
+**[Article explaning this project](https://www.foliocassianico.com.br/en/posts/api-k8s-cluster/)**
 
 This repository contains the **CI/CD pipeline** responsible for building, publishing, and deploying the Metrics API into a **k3s Kubernetes cluster running on an AWS EC2 instance**.
 
